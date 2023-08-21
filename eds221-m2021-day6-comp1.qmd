@@ -9,3 +9,56 @@ library(tidyverse)
 library(here)
 library(janitor)
 ```
+
+```{r}
+wb_indicators <- read_csv(here("data", "wb_indicators.csv"), na.rm = c(". .", ""))
+```
+
+```{r}
+View(wb_indicators)
+```
+
+```{r}
+wb_indicators_long <- wb_indicators %>% 
+  pivot_longer(cols = `2001 [YR2001]`:`2020 [YR2020]`,
+               names_to = 'year',
+               values_to = 'indicator_value')
+```
+
+```{r}
+wb_indicators_separated <- wb_indicators_long %>% 
+  separate(col = 'year',
+           into = c("Year", "yr_chr"),
+                    sep = " ") %>% 
+  dplyr::select(-yr_chr, -`Country Code`, -`Series Code`)
+#select is for columns, filter is for rows
+```
+
+```{r}
+View(wb_indicators_separated)
+```
+
+```{r}
+wb_indicators_wide <- wb_indicators_separated %>% 
+  tidyr::drop_na(`Series Name`) %>% 
+pivot_wider(names_from = 'Series Name',
+              values_from = 'indicator_value')
+```
+
+```{r}
+View(wb_indicators_wide)
+```
+
+```{r}
+# spooky bc based soley on position. Don't do this
+names(wb_indicators_wide) <- c("country",
+                               "year",
+                               "access_clean_fuels_pp",
+                               "access_electricity_pp", "co2_emissions_kt",
+                               "fossil_fuel_cons_pt",
+                               "water_stress")
+```
+
+```{r}
+
+```
